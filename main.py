@@ -1,5 +1,5 @@
 from selenium import webdriver
-from multiprocessing import Process
+from multiprocessing import Process, Value
 
 from dealernetScrapper import getData as getDataDealernet
 from experianScrapper import getData as getDataExperian
@@ -11,12 +11,14 @@ import uvicorn
 from selenium import webdriver
 from dotenv import load_dotenv
 
-# Import Service for Firefox
 from selenium.webdriver.firefox.service import Service
+
+# Create a shared flag to indicate when scraping is ready
+scraping_ready = Value('i', 0)
 
 # Create a function to run each scraping task
 def run_scraping_task(get_data_function, parameter):
-    
+
     # Load the .env file
     load_dotenv()
 
@@ -35,9 +37,14 @@ def run_scraping_task(get_data_function, parameter):
     get_data_function(driver, parameter)  # Pass the parameter to the scraping function
     driver.quit()
 
-def main(rut):
+    # Mark the scraping as ready
+    with scraping_ready.get_lock():
+        scraping_ready.value += 1
+
+def run_scrappers(rut):
     # Create a list of scraping tasks
-    scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
+    # scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
+    scraping_tasks = [getDataExperian]
 
     # Create a process for each scraping task
     processes = []
@@ -58,8 +65,29 @@ app = FastAPI()
 
 @app.get("/{rut}")
 async def root(rut: str):
+    # Reset the scraping ready flag
+    global scraping_ready
+    scraping_ready = Value('i', 0)
+
     # Run the main function with the provided parameter and wait until it's over
-    puntaje = main(rut)
+    run_scrappers(rut)
+
+    # Wait for all scraping processes to finish
+    while True:
+        with scraping_ready.get_lock():
+            if scraping_ready.value == 1:
+                break
+
+    # Create a json with the data of 'dealernet.json', 'experian.json' and 'equifax.json'
+    data = {}
+    with open('dealernet.json') as json_file:
+        data['dealernet'] = json_file.read()
+    with open('experian.json') as json_file:
+        data['experian'] = json_file.read()
+    with open('equifax.json') as json_file:
+        data['equifax'] = json_file.read()
+
+    return data
     
 if __name__ == "__main__":
     # Run fatstapi

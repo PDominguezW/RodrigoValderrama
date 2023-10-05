@@ -2,8 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,6 +14,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium_recaptcha_solver import RecaptchaSolver
+from selenium.webdriver.firefox.service import Service
+from dotenv import load_dotenv
 
 def getData(driver, rut):
     driver.get("https://sec.equifax.cl/clients/")
@@ -23,7 +23,6 @@ def getData(driver, rut):
 
     usuario = "PPAUL.FAC"
     password = "Morosa.2024"
-    rut="20444718-7"
 
     while True:
         try:
@@ -80,3 +79,24 @@ def getData(driver, rut):
 
     # Take screen capture
     driver.save_screenshot("equifax.png")
+
+if __name__ == "__main__":
+
+    # Load the .env file
+    load_dotenv()
+
+    # If we are in development mode
+    if os.getenv('DEVELOPMENT') == 'True':
+        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
+    else:
+        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+
+    # Create service
+    service = Service(executable_path=executable_path)
+
+    # Create driver
+    driver = webdriver.Firefox(service=service)
+
+    getData(driver, "20444718-7")
+
+    driver.quit()

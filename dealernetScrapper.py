@@ -2,8 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,6 +9,8 @@ from selenium.webdriver.support.select import Select
 import shutil
 import glob
 import os
+from dotenv import load_dotenv
+from selenium.webdriver.firefox.service import Service
 
 def getData(driver, rut):
     driver.get(" https://suite.dealernet.cl")
@@ -18,7 +18,6 @@ def getData(driver, rut):
 
     usuario = "LIQUIDEZ.RValderrama"
     password = "benjamin21"
-    rut="20444718-7"
 
     # Search input with id='uname'
     element = driver.find_element(By.XPATH, "//input[@name='uname']")
@@ -33,7 +32,13 @@ def getData(driver, rut):
     element.click()
 
     # Wait 5 seconds
-    time.sleep(15)
+    time.sleep(10)
+
+    # Reload page
+    driver.refresh()
+
+    # Wait 5 seconds
+    time.sleep(10)
 
     # Search span with text 'Central de Informacion'
     element = driver.find_element(By.XPATH, "//span[text()='Central de Informacion']")
@@ -101,3 +106,23 @@ def getData(driver, rut):
     # Changue the name to the file
     os.rename(os.path.join(project_directory, name), os.path.join(project_directory, "dealernet.pdf"))
 
+if __name__ == "__main__":
+
+    # Load the .env file
+    load_dotenv()
+
+    # If we are in development mode
+    if os.getenv('DEVELOPMENT') == 'True':
+        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
+    else:
+        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+
+    # Create service
+    service = Service(executable_path=executable_path)
+
+    # Create driver
+    driver = webdriver.Firefox(service=service)
+
+    getData(driver, "20444718-7")
+
+    driver.quit()
