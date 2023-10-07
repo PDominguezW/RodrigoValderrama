@@ -3,3 +3,7 @@ webdriver-manager
 selenium-recaptcha-solver
 gunicorn
 fastapi
+uvicorn
+asyncio
+Flask==2.1.0
+Werkzeug==2.2.2

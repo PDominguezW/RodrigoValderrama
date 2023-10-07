@@ -1,0 +1,53 @@
+{
+    "detalle_cartera_como_cliente": null,
+    "detalle_cartera_como_deudor": {
+        "Vigente": {
+            "N\u00ba Inst": "7",
+            "Facturas": "147.310",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "2.845",
+            "Total": "150.155"
+        },
+        "Morosa 31-60 dias": {
+            "N\u00ba Inst": "0",
+            "Facturas": "0",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "0",
+            "Total": "0"
+        },
+        "Morosa 61-90 dias": {
+            "N\u00ba Inst": "0",
+            "Facturas": "0",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "0",
+            "Total": "0"
+        },
+        "Morosa 91-360 dias": {
+            "N\u00ba Inst": "0",
+            "Facturas": "0",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "0",
+            "Total": "0"
+        },
+        "Morosa mas de 360 dias": {
+            "N\u00ba Inst": "0",
+            "Facturas": "0",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "0",
+            "Total": "0"
+        },
+        "TOTAL deuda": {
+            "N\u00ba Inst": "7",
+            "Facturas": "147.310",
+            "Cheques": "0",
+            "Letras": "0",
+            "Otros": "2.845",
+            "Total": "150.155"
+        }
+    }
+}

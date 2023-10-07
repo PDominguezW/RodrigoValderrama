@@ -1,17 +1,17 @@
 from selenium import webdriver
 from multiprocessing import Process, Value
+from selenium.webdriver.chrome.service import Service
+from dotenv import load_dotenv
+import os
+from flask import Flask, jsonify
+from selenium.webdriver.common.by import By
 
-from dealernetScrapper import getData as getDataDealernet
 from experianScrapper import getData as getDataExperian
 from equifaxScrapper import getData as getDataEquifax
-import os
-from fastapi import FastAPI
-import uvicorn
-
-from selenium import webdriver
-from dotenv import load_dotenv
-
-from selenium.webdriver.firefox.service import Service
+from dealernetScrapper import getData as getDataDealernet
+import json
+import time
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Create a shared flag to indicate when scraping is ready
 scraping_ready = Value('i', 0)
@@ -19,20 +19,14 @@ scraping_ready = Value('i', 0)
 # Create a function to run each scraping task
 def run_scraping_task(get_data_function, parameter):
 
-    # Load the .env file
-    load_dotenv()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--headless")
 
-    # If we are in development mode
-    if os.getenv('DEVELOPMENT') == 'True':
-        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
-    else:
-        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+    service = Service(ChromeDriverManager().install())
 
-    # Create service
-    service = Service(executable_path=executable_path)
-
-    # Create driver
-    driver = webdriver.Firefox(service=service)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
     get_data_function(driver, parameter)  # Pass the parameter to the scraping function
     driver.quit()
@@ -44,7 +38,7 @@ def run_scraping_task(get_data_function, parameter):
 def run_scrappers(rut):
     # Create a list of scraping tasks
     # scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
-    scraping_tasks = [getDataExperian]
+    scraping_tasks = [getDataExperian, getDataEquifax]
 
     # Create a process for each scraping task
     processes = []
@@ -61,10 +55,16 @@ def run_scrappers(rut):
     for process in processes:
         process.join()
 
-app = FastAPI()
+# Create the Flask app
+app = Flask(__name__)
 
-@app.get("/{rut}")
-async def root(rut: str):
+@app.route("/")
+def welcome():
+    return "Welcome to the API!"
+
+@app.route("/<rut>")
+def root(rut):
+
     # Reset the scraping ready flag
     global scraping_ready
     scraping_ready = Value('i', 0)
@@ -78,17 +78,29 @@ async def root(rut: str):
             if scraping_ready.value == 1:
                 break
 
-    # Create a json with the data of 'dealernet.json', 'experian.json' and 'equifax.json'
+    # Create a JSON response with the data of 'dealernet.json', 'experian.json', and 'equifax.json'.
     data = {}
-    with open('dealernet.json') as json_file:
-        data['dealernet'] = json_file.read()
-    with open('experian.json') as json_file:
-        data['experian'] = json_file.read()
-    with open('equifax.json') as json_file:
-        data['equifax'] = json_file.read()
 
-    return data
-    
+    if os.path.isfile('dealernet.json'):
+        with open('dealernet.json') as json_file:
+            data['dealernet'] = json.load(json_file)
+    else:
+        data['dealernet'] = None
+
+    if os.path.isfile('experian.json'):
+        with open('experian.json') as json_file:
+            data['experian'] = json.load(json_file)
+    else:
+        data['experian'] = None
+
+    if os.path.isfile('equifax.json'):
+        with open('equifax.json') as json_file:
+            data['equifax'] = json.load(json_file)
+    else:
+        data['equifax'] = None
+
+    return jsonify(data)
+
 if __name__ == "__main__":
-    # Run fatstapi
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # Run Flask app
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)

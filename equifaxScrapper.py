@@ -14,8 +14,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium_recaptcha_solver import RecaptchaSolver
-from selenium.webdriver.firefox.service import Service
 from dotenv import load_dotenv
+import json
+from webdriver_manager.chrome import ChromeDriverManager
+# Import Service from Chrome
+from selenium.webdriver.chrome.service import Service
+import traceback
+import codecs
+
 
 def getData(driver, rut):
     driver.get("https://sec.equifax.cl/clients/")
@@ -75,28 +81,134 @@ def getData(driver, rut):
     element.click()
 
     # Wait 5 seconds
-    time.sleep(5)
+    time.sleep(10)
 
-    # Take screen capture
-    driver.save_screenshot("equifax.png")
+    # ------------------------------------------
+    # Start data extraction
+    # ------------------------------------------
+
+    # Create data dictionary
+    data = {}
+
+    # Get 'Detalle Cartera como Cliente'
+    try:
+        # Find div with id 'ection 1'
+        element = driver.find_element(By.XPATH, "//div[@id='ection 1']")
+
+        # Find the table children of element
+        table_element = element.find_element(By.XPATH, ".//table")
+
+        # Get the table header (column names)
+        header_row = table_element.find_element(By.XPATH, './/thead/tr')
+        headers = [header.text for header in header_row.find_elements(By.TAG_NAME, 'th')]
+
+        # Initialize an empty list to store dictionaries
+        table_data = {}
+
+        # Iterate through the table rows and create a dictionary for each row
+        rows = table_element.find_elements(By.XPATH, './/tbody/tr')
+
+        # If there is only 1 row, then there is no data
+        if len(rows) == 1:
+            table_data = None
+        else:
+            for row in rows:
+                # Assuming you already have "row" defined as a WebElement
+                row_data = [cell.text for cell in row.find_elements(By.TAG_NAME, 'td')]
+
+                # Create a dictionary for character replacements
+                char_replacements = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u'}
+
+                # Delete tildes from cell text within row_data
+                row_data = [[char_replacements.get(char, char) for char in cell_text] for cell_text in row_data]
+
+                # Join each cell text within row_data
+                row_data = [''.join(cell_text) for cell_text in row_data]
+
+                print(row_data)
+
+                # Assign the first element of row_data as the key for the dictionary
+                row_name = row_data[0]
+                partial_data = {}
+                for i in range(len(headers)):
+                    partial_data[headers[i]] = row_data[i+1]
+
+                table_data[row_name] = partial_data
+    
+    except Exception as e:
+        traceback.print_exc()
+        table_data = None
+
+    data['detalle_cartera_como_cliente'] = table_data
+
+    # Get 'Detalle Cartera como Deudor'
+    try:
+        # Find div with id 'section 2'
+        element = driver.find_element(By.XPATH, "//div[@id='section 2']")
+
+        # Find the table children of element
+        table_element = element.find_element(By.XPATH, ".//table")
+
+        # Get the table header (column names)
+        header_row = table_element.find_element(By.XPATH, './/thead/tr')
+        headers = [header.text for header in header_row.find_elements(By.TAG_NAME, 'th')]
+
+        # Pop first element
+        headers.pop(0)
+
+        # Initialize an empty list to store dictionaries
+        table_data = {}
+
+        # Iterate through the table rows and create a dictionary for each row
+        rows = table_element.find_elements(By.XPATH, './/tbody/tr')
+
+        # If there is only 1 row, then there is no data
+        if len(rows) == 1:
+            table_data = None
+        else:
+            for row in rows:
+                # Assuming you already have "row" defined as a WebElement
+                row_data = [cell.text for cell in row.find_elements(By.TAG_NAME, 'td')]
+
+                # Create a dictionary for character replacements
+                char_replacements = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u'}
+
+                # Make the character replacements for each cell text within row_data
+                row_data = [[char_replacements.get(char, char) for char in cell_text] for cell_text in row_data]
+
+                # Join each cell text within row_data
+                row_data = [''.join(cell_text) for cell_text in row_data]
+
+                print(row_data)
+
+                # Assign the first element of row_data as the key for the dictionary
+                row_name = row_data[0]
+                partial_data = {}
+                for i in range(len(headers)):
+                    partial_data[headers[i]] = row_data[i+1]
+
+                table_data[row_name] = partial_data
+    
+    except Exception as e:
+        traceback.print_exc()
+        table_data = None
+
+    data['detalle_cartera_como_deudor'] = table_data
+
+    print(data)
+
+    # Write data in json file
+    with open('equifax.json', 'w') as outfile:
+        json.dump(data, outfile)
 
 if __name__ == "__main__":
 
-    # Load the .env file
-    load_dotenv()
+    chrome_options = webdriver.ChromeOptions()
 
-    # If we are in development mode
-    if os.getenv('DEVELOPMENT') == 'True':
-        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
-    else:
-        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+    service = Service(ChromeDriverManager().install())
 
-    # Create service
-    service = Service(executable_path=executable_path)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    # Create driver
-    driver = webdriver.Firefox(service=service)
-
-    getData(driver, "20444718-7")
+    getData(driver, "96.770.100-9")
 
     driver.quit()

@@ -22,6 +22,8 @@ def extractDataFromTable(driver, rut):
 
     # Input name c_rut_busca_display
     preRut = element.find_element(By.XPATH, "//input[@name='c_rut_busca_display']")
+    print(rut)
+    print(rut.split("-"))
     preRut.send_keys(rut.split("-")[0])
 
     # Input name c_dig_busca_display
@@ -46,7 +48,7 @@ def extractDataFromTable(driver, rut):
 
     # Button name 'corre'
     element = driver.find_element(By.XPATH, "//button[@name='corre']")
-    element.click()
+    driver.execute_script("arguments[0].click();", element)
 
     # Sleep 5 seconds
     time.sleep(5)
@@ -149,9 +151,12 @@ def extractDataFromTable(driver, rut):
     except Exception as e:
         data['resumen_socios_sociedades']['rut_socio'] = None
 
+    print(data)
+
     return data
 
 def getData(driver, rut):
+    print("aaaaaaa" + rut)
     driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
     time.sleep(5)
 

@@ -10,7 +10,10 @@ import shutil
 import glob
 import os
 from dotenv import load_dotenv
-from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.service import Service
+import tabula
+import pandas as pd
+from webdriver_manager.chrome import ChromeDriverManager
 
 def getData(driver, rut):
     driver.get(" https://suite.dealernet.cl")
@@ -84,6 +87,8 @@ def getData(driver, rut):
     # Click the third span
     elements[2].click()
 
+    time.sleep(5)
+
     # Get the location of the Download folder
     home_directory = os.path.expanduser("~")
     path = os.path.join(home_directory, "Downloads")
@@ -106,23 +111,17 @@ def getData(driver, rut):
     # Changue the name to the file
     os.rename(os.path.join(project_directory, name), os.path.join(project_directory, "dealernet.pdf"))
 
+    df = tabula.read_pdf('dealernet.pdf')
+
+    # Print the dataframe
+    print(df)
+
 if __name__ == "__main__":
 
-    # Load the .env file
-    load_dotenv()
+    chrome_options = webdriver.ChromeOptions()
 
-    # If we are in development mode
-    if os.getenv('DEVELOPMENT') == 'True':
-        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
-    else:
-        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+    service = Service(ChromeDriverManager().install())
 
-    # Create service
-    service = Service(executable_path=executable_path)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    # Create driver
-    driver = webdriver.Firefox(service=service)
-
-    getData(driver, "20444718-7")
-
-    driver.quit()
+    getData(driver, "96.770.100-9")
