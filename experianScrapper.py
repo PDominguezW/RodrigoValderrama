@@ -22,8 +22,6 @@ def extractDataFromTable(driver, rut):
 
     # Input name c_rut_busca_display
     preRut = element.find_element(By.XPATH, "//input[@name='c_rut_busca_display']")
-    print(rut)
-    print(rut.split("-"))
     preRut.send_keys(rut.split("-")[0])
 
     # Input name c_dig_busca_display
@@ -88,7 +86,6 @@ def extractDataFromTable(driver, rut):
         data['resumen_morosidad']['total_pesos'] = None
 
     try:
-
         # Get the text that says 'Bienes Raices'
         element = body.find_element(By.XPATH, "//td[text()='Bienes Raices']")
 
@@ -151,12 +148,9 @@ def extractDataFromTable(driver, rut):
     except Exception as e:
         data['resumen_socios_sociedades']['rut_socio'] = None
 
-    print(data)
-
     return data
 
 def getData(driver, rut):
-    print("aaaaaaa" + rut)
     driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
     time.sleep(5)
 
@@ -200,7 +194,7 @@ def getData(driver, rut):
     data = extractDataFromTable(driver, rut)
 
     # Si hay socio
-    if data['resumen_socios_sociedades']['rut_socio'] != None:
+    if data['resumen_socios_sociedades']['rut_socio'] != None and data['resumen_socios_sociedades']['rut_socio'] != "":
         rut_socio = data['resumen_socios_sociedades']['rut_socio']
         
         # Make the driver go back one page

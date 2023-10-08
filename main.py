@@ -37,8 +37,7 @@ def run_scraping_task(get_data_function, parameter):
 
 def run_scrappers(rut):
     # Create a list of scraping tasks
-    # scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
-    scraping_tasks = [getDataExperian, getDataEquifax]
+    scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
 
     # Create a process for each scraping task
     processes = []
@@ -65,6 +64,9 @@ def welcome():
 @app.route("/<rut>")
 def root(rut):
 
+    if rut == "favicon.ico":
+        return ""
+
     # Reset the scraping ready flag
     global scraping_ready
     scraping_ready = Value('i', 0)
@@ -75,7 +77,7 @@ def root(rut):
     # Wait for all scraping processes to finish
     while True:
         with scraping_ready.get_lock():
-            if scraping_ready.value == 1:
+            if scraping_ready.value == 3:
                 break
 
     # Create a JSON response with the data of 'dealernet.json', 'experian.json', and 'equifax.json'.

@@ -53,7 +53,6 @@ def getData(driver, rut):
                 recaptcha_iframe = driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
                 solver.click_recaptcha_v2(iframe=recaptcha_iframe)
             except Exception as e:
-                print(e)
                 time.sleep(5)
 
             # Find form with name 'loginForm'
@@ -119,24 +118,21 @@ def getData(driver, rut):
                 # Create a dictionary for character replacements
                 char_replacements = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u'}
 
-                # Delete tildes from cell text within row_data
-                row_data = [[char_replacements.get(char, char) for char in cell_text] for cell_text in row_data]
-
-                # Join each cell text within row_data
-                row_data = [''.join(cell_text) for cell_text in row_data]
-
-                print(row_data)
+                # Make the character replacements for each cell text within row_data
+                row_data[0] = [char_replacements.get(char, char) for char in row_data[0]]
+                row_data[0] = ''.join(row_data[0])
 
                 # Assign the first element of row_data as the key for the dictionary
                 row_name = row_data[0]
                 partial_data = {}
                 for i in range(len(headers)):
+                    if 'Inst' in headers[i]:
+                        headers[i] = 'N.Inst'
                     partial_data[headers[i]] = row_data[i+1]
 
                 table_data[row_name] = partial_data
     
     except Exception as e:
-        traceback.print_exc()
         table_data = None
 
     data['detalle_cartera_como_cliente'] = table_data
@@ -174,28 +170,25 @@ def getData(driver, rut):
                 char_replacements = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u'}
 
                 # Make the character replacements for each cell text within row_data
-                row_data = [[char_replacements.get(char, char) for char in cell_text] for cell_text in row_data]
-
-                # Join each cell text within row_data
-                row_data = [''.join(cell_text) for cell_text in row_data]
-
-                print(row_data)
+                row_data[0] = [char_replacements.get(char, char) for char in row_data[0]]
+                row_data[0] = ''.join(row_data[0])
 
                 # Assign the first element of row_data as the key for the dictionary
                 row_name = row_data[0]
                 partial_data = {}
                 for i in range(len(headers)):
+
+                    if 'Inst' in headers[i]:
+                        headers[i] = 'N.Inst'
+
                     partial_data[headers[i]] = row_data[i+1]
 
                 table_data[row_name] = partial_data
     
     except Exception as e:
-        traceback.print_exc()
         table_data = None
 
     data['detalle_cartera_como_deudor'] = table_data
-
-    print(data)
 
     # Write data in json file
     with open('equifax.json', 'w') as outfile:

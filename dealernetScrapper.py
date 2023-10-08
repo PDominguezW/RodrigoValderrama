@@ -7,13 +7,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 import shutil
-import glob
 import os
 from dotenv import load_dotenv
 from selenium.webdriver.chrome.service import Service
-import tabula
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
+import pdfplumber
+import json
+import glob
 
 def getData(driver, rut):
     driver.get(" https://suite.dealernet.cl")
@@ -75,9 +76,6 @@ def getData(driver, rut):
     # Changue to the new tab
     driver.switch_to.window(driver.window_handles[1])
 
-    # Take screen capture
-    driver.save_screenshot("dealernet.png")
-
     # Search span with title 'Exportar a Pdf'
     element = driver.find_element(By.XPATH, "//div[@class='top-viewer-toolbar']")
 
@@ -89,32 +87,48 @@ def getData(driver, rut):
 
     time.sleep(5)
 
-    # Get the location of the Download folder
-    home_directory = os.path.expanduser("~")
-    path = os.path.join(home_directory, "Downloads")
+    # Find all the files in this folder
+    current_directory = os.getcwd()
+    pdf_file = glob.glob(current_directory + "/*.pdf")[0]
 
-    # Get the latest file in the Downloads folder
-    latest_file = max(glob.glob(path + "/*.pdf"), key=os.path.getctime)
+    print(pdf_file)
+    print(current_directory)
 
-    # Get the name
-    name = os.path.basename(latest_file)
-    print(name)
+    # Changue the name of the pdf to 'dealernet.pdf'
+    os.rename(pdf_file, current_directory + "/dealernet.pdf")
 
-    # Get the path to this project folder
-    project_directory = os.path.dirname(os.path.abspath(__file__))
+    # Extract table info from pages 0 and 1, using pdfplumber
+    with pdfplumber.open("dealernet.pdf") as pdf:
+        page = pdf.pages[0]
+        table = page.extract_table()
 
-    print(latest_file, project_directory)
+        page = pdf.pages[1]
+        table2 = page.extract_table()
 
-    # Move the file to the project folder
-    shutil.move(latest_file, project_directory)
+        # Add info from page 1 to page 0
+        table.extend(table2)
+        
+    # Define the character replacements dictionary for uppercase characters
+    char_replacements = {'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U', 'Ñ': 'N'}
 
-    # Changue the name to the file
-    os.rename(os.path.join(project_directory, name), os.path.join(project_directory, "dealernet.pdf"))
+    # Initialize the resulting dictionary
+    result_dict = {}
 
-    df = tabula.read_pdf('dealernet.pdf')
+    # Get the headers and remove the first column ('VARIABLES/PERIODOS')
+    headers = table[0][1:]
 
-    # Print the dataframe
-    print(df)
+    # Loop through the table rows and create the nested dictionary
+    for row in table[1:]:
+        variable_name = row[0].replace('\n', ' ')  # Replace '\n' with space and handle uppercase characters
+        for uppercase_char, replacement in char_replacements.items():
+            variable_name = variable_name.replace(uppercase_char, replacement)
+        variable_data = {header: value for header, value in zip(headers, row[1:])}
+        result_dict[variable_name] = variable_data
+
+
+    # Write the result to a json file
+    with open('dealernet.json', 'w') as outfile:
+        json.dump(result_dict, outfile)
 
 if __name__ == "__main__":
 

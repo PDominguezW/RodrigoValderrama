@@ -15,8 +15,6 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-    print("Starting scraping")
-
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
@@ -34,6 +32,5 @@ def root():
     return text
 
 if __name__ == "__main__":
-    print("Starting Flask app aaaaaaaaaaaa")
     # Run Flask app
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)
