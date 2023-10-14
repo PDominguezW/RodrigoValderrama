@@ -11,10 +11,12 @@ from selenium.webdriver.support.select import Select
 from dotenv import load_dotenv
 import os
 import json
+import traceback
 
 def extractDataFromTable(driver, rut):
 
     # Search items in the frame of name 'main'
+    time.sleep(5)
     driver.switch_to.frame("main")
 
     # Search form with name trans1
@@ -151,65 +153,73 @@ def extractDataFromTable(driver, rut):
     return data
 
 def getData(driver, rut):
-    driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
-    time.sleep(5)
-
-    usuario="dbello"
-    password="$iNaCoF1"
-    respuesta="kira"
-
-    # Input id user
-    element = driver.find_element(By.XPATH, "//input[@id='user']")
-    element.send_keys(usuario)
-
-    # Input id pass
-    element = driver.find_element(By.XPATH, "//input[@id='pass']")
-    element.send_keys(password)
-
-    # Input id but_user
-    element = driver.find_element(By.XPATH, "//input[@id='but_user']")
-    element.click()
-
-    # Sleep 5 seconds
-    time.sleep(5)
-
     try:
-        # Input id tipo2
-        element = driver.find_element(By.XPATH, "//input[@id='tipo2']")
-        element.send_keys(respuesta)
+        driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
+        time.sleep(5)
 
-        # Input id tipo3
-        element = driver.find_element(By.XPATH, "//input[@id='tipo3']")
-        element.send_keys(respuesta)
+        usuario="dbello"
+        password="$iNaCoF1"
+        respuesta="kira"
 
-        # Button name Boton
-        element = driver.find_element(By.XPATH, "//button[@name='Boton']")
+        # Input id user
+        element = driver.find_element(By.XPATH, "//input[@id='user']")
+        element.send_keys(usuario)
+
+        # Input id pass
+        element = driver.find_element(By.XPATH, "//input[@id='pass']")
+        element.send_keys(password)
+
+        # Input id but_user
+        element = driver.find_element(By.XPATH, "//input[@id='but_user']")
         element.click()
 
         # Sleep 5 seconds
         time.sleep(5)
-    except:
-        pass
 
-    data = extractDataFromTable(driver, rut)
+        try:
+            # Input id tipo2
+            element = driver.find_element(By.XPATH, "//input[@id='tipo2']")
+            element.send_keys(respuesta)
 
-    # Si hay socio
-    if data['resumen_socios_sociedades']['rut_socio'] != None and data['resumen_socios_sociedades']['rut_socio'] != "":
-        rut_socio = data['resumen_socios_sociedades']['rut_socio']
-        
-        # Make the driver go back one page
-        driver.back()
+            # Input id tipo3
+            element = driver.find_element(By.XPATH, "//input[@id='tipo3']")
+            element.send_keys(respuesta)
 
-        # Reload the page, clean the cache
-        driver.refresh()
+            # Button name Boton
+            element = driver.find_element(By.XPATH, "//button[@name='Boton']")
+            element.click()
 
-        time.sleep(5)
+            # Sleep 5 seconds
+            time.sleep(5)
+        except:
+            pass
 
-        data['resumen_socios_sociedades']['data'] = extractDataFromTable(driver, rut_socio)
+        data = extractDataFromTable(driver, rut)
 
-    # Write the data in a json file
-    with open('experian.json', 'w') as outfile:
-        json.dump(data, outfile)
+        # Si hay socio
+        if data['resumen_socios_sociedades']['rut_socio'] != None and data['resumen_socios_sociedades']['rut_socio'] != "":
+            rut_socio = data['resumen_socios_sociedades']['rut_socio']
+            
+            # Make the driver go back one page
+            driver.back()
+
+            # Reload the page, clean the cache
+            driver.refresh()
+
+            time.sleep(5)
+
+            data['resumen_socios_sociedades']['data'] = extractDataFromTable(driver, rut_socio)
+
+        # Write the data in a json file
+        with open('experian.json', 'w') as outfile:
+            json.dump(data, outfile)
+
+        print("experian.json created")
+    
+    except Exception as e:
+        print("Error in experianScrapper.py")
+        # Print traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
 

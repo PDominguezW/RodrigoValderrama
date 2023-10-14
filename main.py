@@ -101,8 +101,17 @@ def root(rut):
     else:
         data['equifax'] = None
 
+    # Delete the files 'dealernet.json', 'experian.json', and 'equifax.json'.
+    if os.path.isfile('dealernet.json'):
+        os.remove('dealernet.json')
+    if os.path.isfile('experian.json'):
+        os.remove('experian.json')
+    if os.path.isfile('equifax.json'):
+        os.remove('equifax.json')
+
     return jsonify(data)
 
 if __name__ == "__main__":
     # Run Flask app
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)
+    from waitress import serve
+    serve(app,host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
