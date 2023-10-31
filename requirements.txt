@@ -10,3 +10,4 @@ Werkzeug==2.2.2
 pandas
 pdfplumber
 waitress
+openpyxl

@@ -1,12 +1,16 @@
 # Get chrome image
 FROM selenium/standalone-chrome
 
-COPY dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py .env ./
+COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py ./
 
 USER root
-RUN apt-get update && apt-get install python3-distutils -y
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3 get-pip.py
+RUN apt-get update
+
+# Install git
+RUN apt-get install -y git
+
+# Install pip
+RUN apt-get install -y python3-pip
 RUN python3 -m pip install -r requirements.txt
 
 # Intall ffmpeg

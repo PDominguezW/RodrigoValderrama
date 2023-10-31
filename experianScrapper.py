@@ -8,10 +8,12 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 import os
 import json
 import traceback
+import threading
 
 def extractDataFromTable(driver, rut):
 
@@ -83,9 +85,9 @@ def extractDataFromTable(driver, rut):
         data['resumen_morosidad']['total_pesos'] = elements[5].text
 
     except Exception as e:
-        data['resumen_morosidad']['nro_acreedores'] = None
-        data['resumen_morosidad']['total_doc_impagos'] = None
-        data['resumen_morosidad']['total_pesos'] = None
+        data['resumen_morosidad']['nro_acreedores'] = 0
+        data['resumen_morosidad']['total_doc_impagos'] = 0
+        data['resumen_morosidad']['total_pesos'] = 0
 
     try:
         # Get the text that says 'Bienes Raices'
@@ -98,7 +100,7 @@ def extractDataFromTable(driver, rut):
         data['resumen_bic']['bienes_raices'] = element.text
     
     except Exception as e:
-        data['resumen_bic']['bienes_raices'] = None
+        data['resumen_bic']['bienes_raices'] = 0
 
     try:
         # Get the p 'Servicio: Resumen BIC - Protestos y Documentos Vigentes'
@@ -118,8 +120,8 @@ def extractDataFromTable(driver, rut):
         data['resumen_avaluo_bienes_raices']['total_en_pesos'] = elements[2].text
 
     except Exception as e:
-        data['resumen_avaluo_bienes_raices']['total_protestos_y_documentos'] = None
-        data['resumen_avaluo_bienes_raices']['total_en_pesos'] = None
+        data['resumen_avaluo_bienes_raices']['total_protestos_y_documentos'] = 0
+        data['resumen_avaluo_bienes_raices']['total_en_pesos'] = 0
 
     try:
         # Get the p with text 'Servicio: Detalle de Socios'
@@ -153,7 +155,9 @@ def extractDataFromTable(driver, rut):
     return data
 
 def getData(driver, rut):
+    print("Getting data from experian.cl")
     try:
+
         driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
         time.sleep(5)
 
@@ -194,6 +198,8 @@ def getData(driver, rut):
         except:
             pass
 
+        print("Logged in")
+
         data = extractDataFromTable(driver, rut)
 
         # Si hay socio
@@ -215,28 +221,33 @@ def getData(driver, rut):
             json.dump(data, outfile)
 
         print("experian.json created")
+        print("experian.cl finished")
+
+        return data['resumen_socios_sociedades']['rut_socio']
     
     except Exception as e:
         print("Error in experianScrapper.py")
         # Print traceback
         traceback.print_exc()
 
+        # Try again
+        getData(driver, rut)
+
 if __name__ == "__main__":
 
-    # Load the .env file
-    load_dotenv()
+    # Set drivers -------------------------------------------------------
+    chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument("--no-sandbox")
+    # chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--headless")
 
-    # If we are in development mode
-    if os.getenv('DEVELOPMENT') == 'True':
-        executable_path = os.getenv('GECKODRIVER_PATH_DEV')
-    else:
-        executable_path = os.getenv('GECKODRIVER_PATH_PROD')
+    # Search if chrome driver 
+    chrome_driver_path='/usr/bin/chromedriver'
 
-    # Create service
-    service = Service(executable_path=executable_path)
+    # Create a ChromeDriver service object
+    service = Service(ChromeDriverManager().install())
 
-    # Create driver
-    driver = webdriver.Firefox(service=service)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     getData(driver, "11.691.672-K")
 

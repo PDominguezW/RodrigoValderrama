@@ -3,113 +3,78 @@ from multiprocessing import Process, Value
 from selenium.webdriver.chrome.service import Service
 from dotenv import load_dotenv
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_file
 from selenium.webdriver.common.by import By
 
 from experianScrapper import getData as getDataExperian
 from equifaxScrapper import getData as getDataEquifax
 from dealernetScrapper import getData as getDataDealernet
 import json
-import time
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+from score_calculator import calculate_score
+from utils import fill_empty_data, create_data_and_clean, validar_rut
 
-# Create a shared flag to indicate when scraping is ready
-scraping_ready = Value('i', 0)
+def run_scrappers(rut):
 
-# Create a function to run each scraping task
-def run_scraping_task(get_data_function, parameter):
+    # Set drivers -------------------------------------------------------
+
+    # Get current working directory
+    current_directory = os.getcwd()
+    prefs = {"download.default_directory": current_directory}
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--headless")
+    chrome_options.add_experimental_option('prefs', prefs)
 
-    service = Service(ChromeDriverManager().install())
+    # Search if chrome driver 
+    chrome_driver_path='/usr/bin/chromedriver'
+
+    # Create a ChromeDriver service object
+    service = Service(chrome_driver_path)
 
     driver = webdriver.Chrome(service=service, options=chrome_options)
+    # --------------------------------------------------------------------
+
+    rut_socio = getDataExperian(driver, rut)
+
+    getDataDealernet(driver, rut, rut_socio)
     
-    get_data_function(driver, parameter)  # Pass the parameter to the scraping function
-    driver.quit()
-
-    # Mark the scraping as ready
-    with scraping_ready.get_lock():
-        scraping_ready.value += 1
-
-def run_scrappers(rut):
-    # Create a list of scraping tasks
-    scraping_tasks = [getDataDealernet, getDataExperian, getDataEquifax]
-
-    # Create a process for each scraping task
-    processes = []
-
-    for task in scraping_tasks:
-        process = Process(target=run_scraping_task, args=(task, rut))
-        processes.append(process)
-
-    # Start all the processes
-    for process in processes:
-        process.start()
-
-    # Wait for all processes to finish
-    for process in processes:
-        process.join()
+    # Close the driver
+    driver.close()
 
 # Create the Flask app
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def welcome():
-    return "Welcome to the API!"
+    return "Welcome to the Liquidez API!"
 
-@app.route("/<rut>")
+@app.route("/<rut>", methods=['GET'])
 def root(rut):
 
     if rut == "favicon.ico":
         return ""
-
-    # Reset the scraping ready flag
-    global scraping_ready
-    scraping_ready = Value('i', 0)
+    
+    # Validate the rut
+    if not validar_rut(rut):
+        return "Rut invalido"
 
     # Run the main function with the provided parameter and wait until it's over
     run_scrappers(rut)
 
-    # Wait for all scraping processes to finish
-    while True:
-        with scraping_ready.get_lock():
-            if scraping_ready.value == 3:
-                break
-
     # Create a JSON response with the data of 'dealernet.json', 'experian.json', and 'equifax.json'.
-    data = {}
+    data = create_data_and_clean()
 
-    if os.path.isfile('dealernet.json'):
-        with open('dealernet.json') as json_file:
-            data['dealernet'] = json.load(json_file)
-    else:
-        data['dealernet'] = None
+    # Format data
+    data = fill_empty_data(data)
 
-    if os.path.isfile('experian.json'):
-        with open('experian.json') as json_file:
-            data['experian'] = json.load(json_file)
-    else:
-        data['experian'] = None
-
-    if os.path.isfile('equifax.json'):
-        with open('equifax.json') as json_file:
-            data['equifax'] = json.load(json_file)
-    else:
-        data['equifax'] = None
-
-    # Delete the files 'dealernet.json', 'experian.json', and 'equifax.json'.
-    if os.path.isfile('dealernet.json'):
-        os.remove('dealernet.json')
-    if os.path.isfile('experian.json'):
-        os.remove('experian.json')
-    if os.path.isfile('equifax.json'):
-        os.remove('equifax.json')
-
-    return jsonify(data)
+    # Calculate the score
+    file_name = calculate_score(rut, data)
+    
+    return send_file(file_name, as_attachment=True, download_name=file_name)
 
 if __name__ == "__main__":
     # Run Flask app

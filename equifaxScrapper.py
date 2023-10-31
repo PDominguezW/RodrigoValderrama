@@ -20,12 +20,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 # Import Service from Chrome
 from selenium.webdriver.chrome.service import Service
 import traceback
-
+import threading
 
 def getData(driver, rut):
+    print("Starting equifaxScrapper.py")
     try:
-        driver.get("https://sec.equifax.cl/clients/")
-        time.sleep(10)
 
         usuario = "PPAUL.FAC"
         password = "Morosa.2024"
@@ -71,6 +70,8 @@ def getData(driver, rut):
         # Get this link: https://sec.equifax.cl/administracionAnfac/anfac
         driver.get("https://sec.equifax.cl/administracionAnfac/anfac")
 
+        print("equifax.cl loaded")
+
         # Wait 5 seconds
         time.sleep(3)
 
@@ -83,11 +84,13 @@ def getData(driver, rut):
         element.click()
 
         # Wait 5 seconds
-        time.sleep(10)
+        time.sleep(5)
 
         # ------------------------------------------
         # Start data extraction
         # ------------------------------------------
+
+        print("Starting data extraction")
 
         # Create data dictionary
         data = {}
@@ -135,7 +138,7 @@ def getData(driver, rut):
                     table_data[row_name] = partial_data
         
         except Exception as e:
-            table_data = None
+            table_data = {}
             traceback.print_exc()
 
         data['detalle_cartera_como_cliente'] = table_data
@@ -189,7 +192,7 @@ def getData(driver, rut):
                     table_data[row_name] = partial_data
         
         except Exception as e:
-            table_data = None
+            table_data = {}
             traceback.print_exc()
 
         data['detalle_cartera_como_deudor'] = table_data
@@ -199,9 +202,13 @@ def getData(driver, rut):
             json.dump(data, outfile)
 
         print("equifax.json created")
+        print("Ending equifaxScrapper.py")
     except Exception as e:
         print("Error in equifaxScrapper.py")
         traceback.print_exc()
+
+        # Try again
+        getData(driver, rut)
 
 if __name__ == "__main__":
 
