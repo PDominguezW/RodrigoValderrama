@@ -1,5 +1,6 @@
 import openpyxl
 import json
+import time
 
 def calculate_score(rut, data):
 
@@ -12,10 +13,13 @@ def calculate_score(rut, data):
     # LEEMOS E INGRESAMOS DATOS TABLA SII
     try:
         # Read excel in read only mode
+        initial_time = time.time()
         sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
 
     except Exception as e:
         print(e)
+    
+    return
 
     # Ingresamos rut en la partye superior
     sheet['B2'] = rut
