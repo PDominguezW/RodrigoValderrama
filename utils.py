@@ -1,5 +1,6 @@
 import json
 import os
+import formulas
 
 def convert_to_int(json_data):
     if isinstance(json_data, dict):
@@ -85,11 +86,32 @@ def validar_rut(rut):
     rut = rut.replace("-", "")
 
     try:
-        rut = int(rut)
+        # Get the rut without the verification digit
+        rut = rut[:-1]
+        int(rut)
+
+        # Get the verification digit
+        verificador = rut[-1]
+
+        # Si no es un numero, debe ser k o K
+        if not verificador.isdigit():
+            if verificador != "K" and verificador != "k":
+                return False
+
     except ValueError:
         return False
 
     return True
+
+def evaluate_xlsx(filename):
+
+    try:
+        formulas.ExcelModel().loads(filename).finish()
+    except Exception as e:
+        # El comando se ejecuta pero genera un error, por lo que lo campturamos
+        pass
+    return True
+
 
 if __name__ == "__main__":
 
