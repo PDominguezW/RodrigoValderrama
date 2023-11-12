@@ -1,6 +1,26 @@
 import json
 import os
 
+def convert_to_int(json_data):
+    if isinstance(json_data, dict):
+        # If it's a dictionary, recursively process its values.
+        for key, value in json_data.items():
+            json_data[key] = convert_to_int(value)
+        return json_data
+    elif isinstance(json_data, list):
+        # If it's a list, recursively process its elements.
+        return [convert_to_int(item) for item in json_data]
+    elif isinstance(json_data, str):
+        # If it's a string, replace '.' with '' and convert to int if possible.
+        cleaned_value = json_data.replace('.', '')
+        try:
+            return int(cleaned_value)
+        except ValueError:
+            return cleaned_value
+    else:
+        # If it's not a dictionary, list, or string, return as is.
+        return json_data
+
 def create_data_and_clean():
     data = {}
     if os.path.isfile('dealernet.json'):
@@ -29,6 +49,9 @@ def create_data_and_clean():
     if os.path.isfile('equifax.json'):
         os.remove('equifax.json')
 
+    # Convert to ints
+    data = convert_to_int(data)
+
     return data
 
 def merge_dicts_with_values(values_dict, nulls_dict):
@@ -39,7 +62,7 @@ def merge_dicts_with_values(values_dict, nulls_dict):
             nulls_dict[key] = value
     return nulls_dict
 
-def fill_empty_data(data):
+def fill_and_clean_data(data):
 
     # Read the file 'null_data.json'
     with open('empty_data.json') as json_file:
@@ -75,7 +98,10 @@ if __name__ == "__main__":
         data = json.load(json_file)
 
     # Run Flask app
-    output = fill_empty_data(data)
+    data = fill_and_clean_data(data)
+
+    #  convert ints
+    output = convert_to_int(data)
 
     # Write the output to 'new_data.json'
     with open('new_data.json', 'w') as outfile:

@@ -13,7 +13,7 @@ import json
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from score_calculator import calculate_score
-from utils import fill_empty_data, create_data_and_clean, validar_rut
+from utils import fill_and_clean_data, create_data_and_clean, validar_rut
 
 def run_scrappers(rut):
 
@@ -69,7 +69,7 @@ def root(rut):
     data = create_data_and_clean()
 
     # Format data
-    data = fill_empty_data(data)
+    data = fill_and_clean_data(data)
 
     # Calculate the score
     file_name = calculate_score(rut, data)

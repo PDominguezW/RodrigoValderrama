@@ -10,47 +10,64 @@ def calculate_score(rut, data):
     # Get the sheet you want to edit
     sheet = workbook['1.Datos']
 
-    # LEEMOS E INGRESAMOS DATOS TABLA SII
-    try:
-        # Read excel in read only mode
-        initial_time = time.time()
-        sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
-
-    except Exception as e:
-        print(e)
     
-    return
+    # Search for the B row that contains rut
+    rut_formateado = rut
+    rut_sin_verificador = rut_formateado.split('-')[0]
+    print(rut_sin_verificador)
+
+    # LEEMOS E INGRESAMOS DATOS TABLA SII
+    sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
+
+    # Search for the B row that contains rut_sin_verificador
+    indice = 1
+    encontrado = False
+    for row in sheet_sii.iter_rows(min_row=2, max_col=2):
+        if str(row[1].value) == str(rut_sin_verificador):
+            encontrado = True
+            break
+        indice += 1 
 
     # Ingresamos rut en la partye superior
     sheet['B2'] = rut
 
-    # Search for the B row that contains rut
-    rut_formateado = rut.replace('.', '')
-    rut_sin_verificador = rut_formateado.split('-')[0]
-
-    fila = 0
-
-    if fila != 0:
+    if encontrado:
+        print(f"Encontrado en la fila {indice}")
         # Llenamos B6 
         sheet['B6'] = rut.split('-')[1]
-        sheet['B7'] = sheet_sii[f'H{fila + 1}'].value
-        sheet['B8'] = 0
 
+        inicio_actividades = str(sheet_sii[f'H{indice}'].value)
+        if inicio_actividades.count('-') == 2:
+            inicio_actividades_formateado = inicio_actividades.split(' ')[0].replace('-', '/')
+            sheet['B7'] = inicio_actividades_formateado
+
+            inicio_actividades_year = int(inicio_actividades_formateado.split('/')[0])
+            actual_year = int(time.strftime("%Y"))
+            sheet['B14'] = str(int(actual_year - inicio_actividades_year)) + " Años"
+        else:
+            sheet['B7'] = None
+            sheet['B14'] = None
+
+            inicio_actividades_formateado = inicio_actividades
+        
+
+        tamano_codigo = int(sheet_sii[f'E{indice}'].value)
+        sheet['B8'] = tamano_codigo
+        # Fecha hoy B9, no se modifica
         sheet['B10'] = rut
-        sheet['B11'] = sheet_sii[f'D{fila + 1}'].value
-        sheet['B12'] = sheet_sii[f'I{fila + 1}'].value
-        sheet['B13'] = sheet_sii[f'F{fila + 1}'].value
-        sheet['B14'] = sheet_sii[f'G{fila + 1}'].value
-        sheet['B15'] = sheet_sii[f'E{fila + 1}'].value
-        sheet['B15'] = sheet_sii[f'E{fila + 1}'].value
+        sheet['B11'] = sheet_sii[f'D{indice}'].value
+        sheet['B12'] = sheet_sii[f'I{indice}'].value
+        sheet['B13'] = sheet_sii[f'F{indice}'].value
+        sheet['B15'] = sheet_sii[f'G{indice}'].value
+
+        # Consideramos tamaño en B8
+        sheet['B16'] = sheet[f'F{tamano_codigo + 6}'].value
+        sheet['B17'] = sheet_sii[f'R{indice}'].value
+        sheet['B18'] = sheet[f'J{tamano_codigo + 6}'].value
 
     # INGRESAMOS DATA EXPERIAN
     sheet['B21'] = data["experian"]["resumen_avaluo_bienes_raices"]["total_protestos_y_documentos"]
     sheet['B22'] = data["experian"]["resumen_avaluo_bienes_raices"]["total_en_pesos"]
-    # sheet['B23'] = data["experian"]["resumen_morosidad"]["nro_acreedores"]
-    # sheet['B24'] = data["experian"]["resumen_morosidad"]["total_doc_impagos"]
-    # sheet['B25'] = data["experian"]["resumen_morosidad"]["total_pesos"]
-
     sheet['B23'] = data["experian"]["resumen_morosidad"]["nro_acreedores"]
     sheet['B24'] = data["experian"]["resumen_morosidad"]["total_pesos"]
     sheet['B25'] = data["experian"]["resumen_morosidad"]["total_doc_impagos"]
@@ -107,13 +124,17 @@ def calculate_score(rut, data):
     # Dealernet empresa
     for columna in columnas:
         for i in range(4):
-            sheet[f'{periodos_letras[i]}{columnas.index(columna) + 41}'] = data["dealernet"]["empresa"][columna][periodos[i]]
+            valor_data = data["dealernet"]["empresa"][columna][periodos[i]]
+            valor_formateado = int(valor_data)
+            sheet[f'{periodos_letras[i]}{columnas.index(columna) + 41}'] = valor_formateado
 
     if data["experian"]["resumen_socios_sociedades"]["rut_socio"]:
         # Dealernet socio
         for columna in columnas:
             for i in range(4):
-                sheet[f'{periodos_letras[i]}{columnas.index(columna) + 66}'] = data["dealernet"]["socio"][columna][periodos[i]]
+                valor_data = data["dealernet"]["socio"][columna][periodos[i]]
+                valor_formateado = int(valor_data)
+                sheet[f'{periodos_letras[i]}{columnas.index(columna) + 66}'] = valor_formateado
 
     # Save the changes to the workbook
     workbook.save('modelo_evaluacion_result.xlsx')
@@ -127,4 +148,4 @@ if __name__ == "__main__":
         data = json.load(json_file)
 
     # Run Flask app 76109342
-    calculate_score("76109013", data)
+    calculate_score("50026400-4", data)
