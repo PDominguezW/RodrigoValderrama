@@ -58,7 +58,15 @@ def calculate_score(rut, data):
         sheet['B11'] = sheet_sii[f'D{indice}'].value
         sheet['B12'] = sheet_sii[f'I{indice}'].value
         sheet['B13'] = sheet_sii[f'F{indice}'].value
-        sheet['B15'] = sheet_sii[f'G{indice}'].value
+
+        # Check if sheet_sii[f'G{indice}'].value is a string that can be interpreted as int
+        trabajadores_valor = sheet_sii[f'G{indice}'].value
+        if trabajadores_valor.isnumeric():
+            trabajadores = int(trabajadores_valor)
+            if trabajadores < 5:
+                sheet['B15'] = "< 5 Trabajadores"
+            else:
+                sheet['B15'] = trabajadores_valor + " Trabajadores"
 
         # Consideramos tamaño en B8
         sheet['B16'] = sheet[f'F{tamano_codigo + 6}'].value
