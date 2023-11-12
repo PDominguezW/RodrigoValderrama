@@ -73,6 +73,8 @@ def root(rut):
 
     # Calculate the score
     file_name = calculate_score(rut, data)
+
+    print("Ejecucion terminada")
     
     return send_file(file_name, as_attachment=True, download_name=file_name)
 
