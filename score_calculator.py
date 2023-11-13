@@ -30,24 +30,24 @@ def calculate_score(rut, data):
         print(i.value)
 
     # Ingresamos rut en la parte superior
-    sheet['B2'] = rut
+    sheet['B2'].value = rut
 
     if encontrado:
         print(f"Encontrado")
         # Llenamos B6 
-        sheet['B6'] = rut.split('-')[1]
+        sheet['B6'].value = rut.split('-')[1]
 
         inicio_actividades = str(valores_sii[7].value)
         if inicio_actividades.count('-') == 2:
             inicio_actividades_formateado = inicio_actividades.split(' ')[0].replace('-', '/')
-            sheet['B7'] = inicio_actividades_formateado
+            sheet['B7'].value = inicio_actividades_formateado
 
             inicio_actividades_year = int(inicio_actividades_formateado.split('/')[0])
             actual_year = int(time.strftime("%Y"))
-            sheet['B14'] = str(int(actual_year - inicio_actividades_year)) + " Años"
+            sheet['B14'].value = str(int(actual_year - inicio_actividades_year)) + " Años"
         else:
-            sheet['B7'] = None
-            sheet['B14'] = None
+            sheet['B7'].value = None
+            sheet['B14'].value = None
 
             inicio_actividades_formateado = inicio_actividades
     else:
@@ -55,25 +55,29 @@ def calculate_score(rut, data):
         
 
         tamano_codigo = int(valores_sii[4].value)
-        sheet['B8'] = tamano_codigo
+        sheet['B8'].value = tamano_codigo
         # Fecha hoy B9, no se modifica
-        sheet['B10'] = rut
-        sheet['B11'] = valores_sii[3].value
-        sheet['B12'] = valores_sii[8].value
-        sheet['B13'] = valores_sii[5].value
+        sheet['B10'].value = rut
+        sheet['B11'].value = valores_sii[3].value
+        sheet['B12'].value = valores_sii[8].value
+        sheet['B13'].value = valores_sii[5].value
+
+        print(sheet['B11'].value)
+        print(sheet['B12'].value)
+        print(sheet['B13'].value)
 
         trabajadores_valor = valores_sii[6].value
         if str(trabajadores_valor).isnumeric():
             trabajadores = int(trabajadores_valor)
             if trabajadores < 5:
-                sheet['B15'] = "< 5 Trabajadores"
+                sheet['B15'].value = "< 5 Trabajadores"
             else:
-                sheet['B15'] = str(trabajadores_valor) + " Trabajadores"
+                sheet['B15'].value = str(trabajadores_valor) + " Trabajadores"
 
         # Consideramos tamaño en B8
-        sheet['B16'] = sheet[f'F{tamano_codigo + 6}'].value
-        sheet['B17'] = valores_sii[17].value
-        sheet['B18'] = sheet[f'J{tamano_codigo + 6}'].value
+        sheet['B16'].value = sheet[f'F{tamano_codigo + 6}'].value
+        sheet['B17'].value = valores_sii[17].value
+        sheet['B18'].value = sheet[f'J{tamano_codigo + 6}'].value
 
     # INGRESAMOS DATA EXPERIAN
     sheet['B21'] = data["experian"]["resumen_avaluo_bienes_raices"]["total_protestos_y_documentos"]

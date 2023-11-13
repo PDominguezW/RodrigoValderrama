@@ -13,7 +13,7 @@ import json
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from score_calculator import calculate_score
-from utils import fill_and_clean_data, create_data_and_clean, validar_rut, evaluate_xlsx
+from utils import fill_and_clean_data, create_data_and_clean, validar_rut
 
 def run_scrappers(rut):
 
@@ -78,7 +78,7 @@ def root(rut):
     file_name = calculate_score(rut, data)
 
     # Evaluate the xlsx file
-    evaluate_xlsx(file_name)
+    # evaluate_xlsx(file_name)
 
     print("Ejecucion terminada")
     

@@ -103,15 +103,6 @@ def validar_rut(rut):
 
     return True
 
-def evaluate_xlsx(filename):
-
-    try:
-        formulas.ExcelModel().loads(filename).finish()
-    except Exception as e:
-        # El comando se ejecuta pero genera un error, por lo que lo campturamos
-        pass
-    return True
-
 
 if __name__ == "__main__":
 
