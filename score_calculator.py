@@ -10,7 +10,6 @@ def calculate_score(rut, data):
     # Get the sheet you want to edit
     sheet = workbook['1.Datos']
 
-    
     # Search for the B row that contains rut
     rut_formateado = rut
     rut_sin_verificador = rut_formateado.split('-')[0]
@@ -49,6 +48,8 @@ def calculate_score(rut, data):
             sheet['B14'] = None
 
             inicio_actividades_formateado = inicio_actividades
+    else:
+        print(f"No encontrado")
         
 
         tamano_codigo = int(sheet_sii[f'E{indice}'].value)

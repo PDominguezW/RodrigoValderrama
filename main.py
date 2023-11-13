@@ -33,7 +33,7 @@ def run_scrappers(rut):
     chrome_driver_path='/usr/bin/chromedriver'
 
     # Create a ChromeDriver service object
-    service = Service(chrome_driver_path)
+    service = Service(ChromeDriverManager().install())
 
     driver = webdriver.Chrome(service=service, options=chrome_options)
     # --------------------------------------------------------------------
@@ -54,6 +54,9 @@ def welcome():
 
 @app.route("/<rut>", methods=['GET'])
 def root(rut):
+
+    # Format rut
+    rut = rut.replace(".", "")
 
     if rut == "favicon.ico":
         return ""
