@@ -78,7 +78,7 @@ def validar_rut(rut):
     if "-" not in rut:
         return False
 
-    rut = rut.replace(".", "").upper()
+    rut = rut.upper()
     if len(rut) < 3:
         return False
 

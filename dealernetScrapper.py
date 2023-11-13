@@ -69,7 +69,7 @@ def getDataForRut(driver, rut):
     # Click the third span
     elements[2].click()
 
-    time.sleep(10)
+    time.sleep(12)
 
     print("PDF created")
 
