@@ -19,23 +19,25 @@ def calculate_score(rut, data):
     sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
 
     # Search for the B row that contains rut_sin_verificador
-    indice = 1
     encontrado = False
-    for row in sheet_sii.iter_rows(min_row=2, max_col=2):
+    for row in sheet_sii.iter_rows(min_row=2, max_col=23):
         if str(row[1].value) == str(rut_sin_verificador):
+            valores_sii = row
             encontrado = True
             break
-        indice += 1 
 
-    # Ingresamos rut en la partye superior
+    for i in valores_sii:
+        print(i.value)
+
+    # Ingresamos rut en la parte superior
     sheet['B2'] = rut
 
     if encontrado:
-        print(f"Encontrado en la fila {indice}")
+        print(f"Encontrado")
         # Llenamos B6 
         sheet['B6'] = rut.split('-')[1]
 
-        inicio_actividades = str(sheet_sii[f'H{indice}'].value)
+        inicio_actividades = str(valores_sii[7].value)
         if inicio_actividades.count('-') == 2:
             inicio_actividades_formateado = inicio_actividades.split(' ')[0].replace('-', '/')
             sheet['B7'] = inicio_actividades_formateado
@@ -52,16 +54,15 @@ def calculate_score(rut, data):
         print(f"No encontrado")
         
 
-        tamano_codigo = int(sheet_sii[f'E{indice}'].value)
+        tamano_codigo = int(valores_sii[4].value)
         sheet['B8'] = tamano_codigo
         # Fecha hoy B9, no se modifica
         sheet['B10'] = rut
-        sheet['B11'] = sheet_sii[f'D{indice}'].value
-        sheet['B12'] = sheet_sii[f'I{indice}'].value
-        sheet['B13'] = sheet_sii[f'F{indice}'].value
+        sheet['B11'] = valores_sii[3].value
+        sheet['B12'] = valores_sii[8].value
+        sheet['B13'] = valores_sii[5].value
 
-        # Check if sheet_sii[f'G{indice}'].value is a string that can be interpreted as int
-        trabajadores_valor = sheet_sii[f'G{indice}'].value
+        trabajadores_valor = valores_sii[6].value
         if str(trabajadores_valor).isnumeric():
             trabajadores = int(trabajadores_valor)
             if trabajadores < 5:
@@ -71,7 +72,7 @@ def calculate_score(rut, data):
 
         # Consideramos tamaño en B8
         sheet['B16'] = sheet[f'F{tamano_codigo + 6}'].value
-        sheet['B17'] = sheet_sii[f'R{indice}'].value
+        sheet['B17'] = valores_sii[17].value
         sheet['B18'] = sheet[f'J{tamano_codigo + 6}'].value
 
     # INGRESAMOS DATA EXPERIAN

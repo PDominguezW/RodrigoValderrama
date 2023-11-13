@@ -79,6 +79,8 @@ def root(rut):
 
     # Evaluate the xlsx file
     evaluate_xlsx(file_name)
+
+    print("Ejecucion terminada")
     
     return send_file(file_name, as_attachment=True, download_name=file_name)
 
