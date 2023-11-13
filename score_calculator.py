@@ -10,7 +10,6 @@ def calculate_score(rut, data):
     # Get the sheet you want to edit
     sheet = workbook['1.Datos']
 
-    
     # Search for the B row that contains rut
     rut_formateado = rut
     rut_sin_verificador = rut_formateado.split('-')[0]
@@ -49,6 +48,8 @@ def calculate_score(rut, data):
             sheet['B14'] = None
 
             inicio_actividades_formateado = inicio_actividades
+    else:
+        print(f"No encontrado")
         
 
         tamano_codigo = int(sheet_sii[f'E{indice}'].value)
@@ -61,12 +62,12 @@ def calculate_score(rut, data):
 
         # Check if sheet_sii[f'G{indice}'].value is a string that can be interpreted as int
         trabajadores_valor = sheet_sii[f'G{indice}'].value
-        if trabajadores_valor.isnumeric():
+        if str(trabajadores_valor).isnumeric():
             trabajadores = int(trabajadores_valor)
             if trabajadores < 5:
                 sheet['B15'] = "< 5 Trabajadores"
             else:
-                sheet['B15'] = trabajadores_valor + " Trabajadores"
+                sheet['B15'] = str(trabajadores_valor) + " Trabajadores"
 
         # Consideramos tamaño en B8
         sheet['B16'] = sheet[f'F{tamano_codigo + 6}'].value
@@ -83,6 +84,9 @@ def calculate_score(rut, data):
     if data["experian"]["resumen_socios_sociedades"]["rut_socio"]:
         sheet['B28'] = data["experian"]["resumen_socios_sociedades"]["rut_socio"].split('-')[0]
         sheet['B29'] = data["experian"]["resumen_socios_sociedades"]["rut_socio"].split('-')[1]
+    else:
+        sheet['B28'] = "NULL"
+        sheet['B29'] = "NULL"
 
     sheet['B30'] = data["experian"]["resumen_socios_sociedades"]["data"]["resumen_avaluo_bienes_raices"]["total_protestos_y_documentos"]
     sheet['B31'] = data["experian"]["resumen_socios_sociedades"]["data"]["resumen_avaluo_bienes_raices"]["total_en_pesos"]

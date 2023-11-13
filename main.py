@@ -13,7 +13,7 @@ import json
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from score_calculator import calculate_score
-from utils import fill_and_clean_data, create_data_and_clean, validar_rut
+from utils import fill_and_clean_data, create_data_and_clean, validar_rut, evaluate_xlsx
 
 def run_scrappers(rut):
 
@@ -55,6 +55,9 @@ def welcome():
 @app.route("/<rut>", methods=['GET'])
 def root(rut):
 
+    # Format rut
+    rut = rut.replace(".", "")
+
     if rut == "favicon.ico":
         return ""
     
@@ -73,6 +76,9 @@ def root(rut):
 
     # Calculate the score
     file_name = calculate_score(rut, data)
+
+    # Evaluate the xlsx file
+    evaluate_xlsx(file_name)
     
     return send_file(file_name, as_attachment=True, download_name=file_name)
 
