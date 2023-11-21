@@ -1,260 +1,50 @@
 {
     "dealernet": {
         "empresa": {
-            "AL DIA E IMPAGOS <30 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS COMERCIALES": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS CONTINGENTES": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS DE CONSUMO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS LEASING AL DIA": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS LEASING IMPAGO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS PARA VIVIENDA": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "DEUDA COM. VENCIDA MEX": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "DEUDA COM. VIGENTE MEX": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 180 DIAS Y 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 30 Y 90 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 90 Y 180 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS >= 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS 30 DIAS Y 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS <30 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS >= 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INSTRUM. DEUDAS ADQUIRIDOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "LINEA CREDITO DISPONIBLE": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "NRO. ENTIDADES CRED.CONSUMO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "NRO. ENTIDADES.CRED.COM ER.": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "OPERACIONES FINANCIERAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            }
+            "AL DIA E IMPAGOS <30 DIAS": {},
+            "CREDITOS COMERCIALES": {},
+            "CREDITOS CONTINGENTES": {},
+            "CREDITOS DE CONSUMO": {},
+            "CREDITOS LEASING AL DIA": {},
+            "CREDITOS LEASING IMPAGO": {},
+            "CREDITOS PARA VIVIENDA": {},
+            "DEUDA COM. VENCIDA MEX": {},
+            "DEUDA COM. VIGENTE MEX": {},
+            "IMPAGOS 180 DIAS Y 3 ANOS": {},
+            "IMPAGOS 30 Y 90 DIAS": {},
+            "IMPAGOS 90 Y 180 DIAS": {},
+            "IMPAGOS >= 3 ANOS": {},
+            "INDIRECTA IMPAGOS 30 DIAS Y 3 ANOS": {},
+            "INDIRECTA IMPAGOS <30 DIAS": {},
+            "INDIRECTA IMPAGOS >= 3 ANOS": {},
+            "INSTRUM. DEUDAS ADQUIRIDOS": {},
+            "LINEA CREDITO DISPONIBLE": {},
+            "NRO. ENTIDADES CRED.CONSUMO": {},
+            "NRO. ENTIDADES.CRED.COM ER.": {},
+            "OPERACIONES FINANCIERAS": {}
         },
         "socio": {
-            "AL DIA E IMPAGOS <30 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS COMERCIALES": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS CONTINGENTES": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS DE CONSUMO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS LEASING AL DIA": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS LEASING IMPAGO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "CREDITOS PARA VIVIENDA": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "DEUDA COM. VENCIDA MEX": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "DEUDA COM. VIGENTE MEX": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 180 DIAS Y 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 30 Y 90 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS 90 Y 180 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "IMPAGOS >= 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS 30 DIAS Y 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS <30 DIAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INDIRECTA IMPAGOS >= 3 ANOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "INSTRUM. DEUDAS ADQUIRIDOS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "LINEA CREDITO DISPONIBLE": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "NRO. ENTIDADES CRED.CONSUMO": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "NRO. ENTIDADES.CRED.COM ER.": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            },
-            "OPERACIONES FINANCIERAS": {
-                "07/2023": 0,
-                "08/2023": 0,
-                "09/2023": 0,
-                "12/2022": 0
-            }
+            "AL DIA E IMPAGOS <30 DIAS": {},
+            "CREDITOS COMERCIALES": {},
+            "CREDITOS CONTINGENTES": {},
+            "CREDITOS DE CONSUMO": {},
+            "CREDITOS LEASING AL DIA": {},
+            "CREDITOS LEASING IMPAGO": {},
+            "CREDITOS PARA VIVIENDA": {},
+            "DEUDA COM. VENCIDA MEX": {},
+            "DEUDA COM. VIGENTE MEX": {},
+            "IMPAGOS 180 DIAS Y 3 ANOS": {},
+            "IMPAGOS 30 Y 90 DIAS": {},
+            "IMPAGOS 90 Y 180 DIAS": {},
+            "IMPAGOS >= 3 ANOS": {},
+            "INDIRECTA IMPAGOS 30 DIAS Y 3 ANOS": {},
+            "INDIRECTA IMPAGOS <30 DIAS": {},
+            "INDIRECTA IMPAGOS >= 3 ANOS": {},
+            "INSTRUM. DEUDAS ADQUIRIDOS": {},
+            "LINEA CREDITO DISPONIBLE": {},
+            "NRO. ENTIDADES CRED.CONSUMO": {},
+            "NRO. ENTIDADES.CRED.COM ER.": {},
+            "OPERACIONES FINANCIERAS": {}
         }
     },
     "equifax": {

@@ -1,6 +1,5 @@
 import json
 import os
-import formulas
 
 def convert_to_int(json_data):
     if isinstance(json_data, dict):
@@ -112,10 +111,3 @@ if __name__ == "__main__":
 
     # Run Flask app
     data = fill_and_clean_data(data)
-
-    #  convert ints
-    output = convert_to_int(data)
-
-    # Write the output to 'new_data.json'
-    with open('new_data.json', 'w') as outfile:
-        json.dump(output, outfile, indent=4)

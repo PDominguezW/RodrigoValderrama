@@ -114,6 +114,12 @@ def getDataForRut(driver, rut):
         variable_data = {header: value for header, value in zip(headers, row[1:])}
         result_dict[variable_name] = variable_data
 
+    print(result_dict)
+
+    # write result to json file
+    with open('dealernet.json', 'w') as outfile:
+        json.dump(result_dict, outfile)
+
     # Delete the file at 'pdf_file'
     os.remove(pdf_file_name)
 
@@ -187,11 +193,14 @@ if __name__ == "__main__":
     prefs = {"download.default_directory": current_directory}
 
     chrome_options = webdriver.ChromeOptions()
-
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('prefs', prefs)
 
+    # Create a ChromeDriver service object
     service = Service(ChromeDriverManager().install())
 
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    getData(driver, "11.691.672-K", "78.487.850-3")
+    getData(driver, "76.051.425-K", None)

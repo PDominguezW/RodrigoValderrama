@@ -33,7 +33,7 @@ def run_scrappers(rut):
     chrome_driver_path='/usr/bin/chromedriver'
 
     # Create a ChromeDriver service object
-    service = Service(chrome_driver_path)
+    service = Service(ChromeDriverManager().install())
 
     driver = webdriver.Chrome(service=service, options=chrome_options)
     # --------------------------------------------------------------------
@@ -77,8 +77,6 @@ def root(rut):
     # Calculate the score
     file_name = calculate_score(rut, data)
 
-    print("Ejecucion terminada")
-    
     return send_file(file_name, as_attachment=True, download_name=file_name)
 
 if __name__ == "__main__":

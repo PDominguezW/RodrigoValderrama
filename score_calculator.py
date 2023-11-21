@@ -13,7 +13,6 @@ def calculate_score(rut, data):
     # Search for the B row that contains rut
     rut_formateado = rut
     rut_sin_verificador = rut_formateado.split('-')[0]
-    print(rut_sin_verificador)
 
     # LEEMOS E INGRESAMOS DATOS TABLA SII
     sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
@@ -92,7 +91,6 @@ def calculate_score(rut, data):
     sheet['B34'] = data["experian"]["resumen_socios_sociedades"]["data"]["resumen_morosidad"]["total_doc_impagos"]
 
     # INGRESAMOS DATA DEALERNET
-
     periodos = list(data["dealernet"]["empresa"]["AL DIA E IMPAGOS <30 DIAS"].keys())
     periodos_letras = ['B', 'C', 'D', 'E']
 
