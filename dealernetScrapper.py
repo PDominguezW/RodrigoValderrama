@@ -8,6 +8,7 @@ import pdfplumber
 import json
 import glob
 import traceback
+from dotenv import load_dotenv
 
 def getDataForRut(driver, rut):
 
@@ -117,14 +118,17 @@ def getDataForRut(driver, rut):
 def getData(driver, rut_businness, rut_socio):
     print("Dealernet: Starting dealernetScrapper.py")
 
+    # Load .env file
+    load_dotenv()
+
     # Log in
     driver.get("https://suite.dealernet.cl")
     time.sleep(10)
 
     print("Dealernet: dealernet.cl loaded")
 
-    usuario = "LIQUIDEZ.RValderrama"
-    password = "benjamin21"
+    usuario = os.getenv("DEALERNET_USER")
+    password = os.getenv("DEALERNET_PASSWORD")
 
     # Search input with id='uname'
     element = driver.find_element(By.XPATH, "//input[@name='uname']")

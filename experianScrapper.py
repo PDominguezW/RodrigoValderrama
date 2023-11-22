@@ -5,6 +5,8 @@ import time
 from webdriver_manager.chrome import ChromeDriverManager
 import json
 import traceback
+from dotenv import load_dotenv
+import os
 
 def extractDataFromTable(driver, rut):
 
@@ -149,14 +151,18 @@ def extractDataFromTable(driver, rut):
 
 def getData(driver, rut):
     print("Experian: Getting data from experian.cl")
+
+    # Load .env file
+    load_dotenv()
+    
     try:
 
         driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
         time.sleep(5)
 
-        usuario="dbello"
-        password="$iNaCoF1"
-        respuesta="kira"
+        usuario=os.getenv("EXPERIAN_USER")
+        password=os.getenv("EXPERIAN_PASSWORD")
+        respuesta=os.getenv("EXPERIAN_RESPUESTA_PREGUNTAS")
 
         # Input id user
         element = driver.find_element(By.XPATH, "//input[@id='user']")
