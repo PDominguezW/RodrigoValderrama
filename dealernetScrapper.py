@@ -1,22 +1,13 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.select import Select
-import shutil
 import os
-from dotenv import load_dotenv
 from selenium.webdriver.chrome.service import Service
-import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 import pdfplumber
 import json
 import glob
 import traceback
-import threading
 
 def getDataForRut(driver, rut):
 
@@ -33,7 +24,7 @@ def getDataForRut(driver, rut):
     # Wait 5 seconds
     time.sleep(10)
 
-    print("Central de Informacion loaded")
+    print("Dealernet: Central de Informacion loaded")
 
     # Input with id='rut'
     element = driver.find_element(By.XPATH, "//input[@id='rut']")
@@ -71,7 +62,7 @@ def getDataForRut(driver, rut):
 
     time.sleep(12)
 
-    print("PDF created")
+    print("Dealernet: PDF created")
 
     # Close the current tab
     driver.close()
@@ -114,8 +105,6 @@ def getDataForRut(driver, rut):
         variable_data = {header: value for header, value in zip(headers, row[1:])}
         result_dict[variable_name] = variable_data
 
-    print(result_dict)
-
     # write result to json file
     with open('dealernet.json', 'w') as outfile:
         json.dump(result_dict, outfile)
@@ -126,13 +115,13 @@ def getDataForRut(driver, rut):
     return result_dict
 
 def getData(driver, rut_businness, rut_socio):
-    print("Starting dealernetScrapper.py")
+    print("Dealernet: Starting dealernetScrapper.py")
 
     # Log in
     driver.get("https://suite.dealernet.cl")
     time.sleep(10)
 
-    print("dealernet.cl loaded")
+    print("Dealernet: dealernet.cl loaded")
 
     usuario = "LIQUIDEZ.RValderrama"
     password = "benjamin21"
@@ -156,11 +145,10 @@ def getData(driver, rut_businness, rut_socio):
         # Get the data for the rut
         result_bussiness = getDataForRut(driver, rut_businness)
 
-        print("result_bussiness created")
-        print(result_bussiness)
+        print("Dealernet: result_bussiness date extracted")
 
         if rut_socio:
-            print("rut_socio exists")
+            print("Dealernet: rut_socio exists")
 
             # Restart the driver
             result_socio = getDataForRut(driver, rut_socio)
@@ -176,11 +164,11 @@ def getData(driver, rut_businness, rut_socio):
         with open('dealernet.json', 'w') as outfile:
             json.dump(result_dict, outfile)
 
-        print("dealernet.json created")
-        print("Ending dealernetScrapper.py")
+        print("Dealernet: dealernet.json created")
+        print("Dealernet: Ending dealernetScrapper.py")
         
     except Exception as e:
-        print("Error in dealernetScrapper.py")
+        print("Dealernet: Error in dealernetScrapper.py")
         traceback.print_exc()
 
         # Try again

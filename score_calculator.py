@@ -14,7 +14,7 @@ def calculate_score(rut, data):
     rut_formateado = rut
     rut_sin_verificador = rut_formateado.split('-')[0]
 
-    # LEEMOS E INGRESAMOS DATOS TABLA SII
+    # Read data from 'Tabla_SII.xlsx'
     sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
 
     # Search for the B row that contains rut_sin_verificador
@@ -25,12 +25,11 @@ def calculate_score(rut, data):
             encontrado = True
             break
 
-    # Ingresamos rut en la parte superior
+    # Enter rut
     sheet['B2'] = rut
 
     if encontrado:
-        print(f"Encontrado")
-        # Llenamos B6 
+        print(f"Score Calculator: Rut encontrado en Tabla_SII.xlsx")
         sheet['B6'] = rut.split('-')[1]
 
         inicio_actividades = str(valores_sii[7].value)

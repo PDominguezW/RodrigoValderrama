@@ -1,19 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.select import Select
 from webdriver_manager.chrome import ChromeDriverManager
-from dotenv import load_dotenv
-import os
 import json
 import traceback
-import threading
 
 def extractDataFromTable(driver, rut):
 
@@ -58,6 +49,8 @@ def extractDataFromTable(driver, rut):
     # -----------------------------------------------
     # Here we start collecting the data
     # -----------------------------------------------
+
+    print("Experian: Extracting data")
 
     data = {
         'resumen_morosidad': {},
@@ -155,7 +148,7 @@ def extractDataFromTable(driver, rut):
     return data
 
 def getData(driver, rut):
-    print("Getting data from experian.cl")
+    print("Experian: Getting data from experian.cl")
     try:
 
         driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
@@ -198,7 +191,7 @@ def getData(driver, rut):
         except:
             pass
 
-        print("Logged in")
+        print("Experian: Logged in")
 
         data = extractDataFromTable(driver, rut)
 
@@ -220,13 +213,13 @@ def getData(driver, rut):
         with open('experian.json', 'w') as outfile:
             json.dump(data, outfile)
 
-        print("experian.json created")
-        print("experian.cl finished")
+        print("Experian: experian.json created")
+        print("Experian: experian.cl finished")
 
         return data['resumen_socios_sociedades']['rut_socio']
     
     except Exception as e:
-        print("Error in experianScrapper.py")
+        print("Experian: Error in experianScrapper.py")
         # Print traceback
         traceback.print_exc()
 
@@ -237,9 +230,9 @@ if __name__ == "__main__":
 
     # Set drivers -------------------------------------------------------
     chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--headless")
 
     # Search if chrome driver 
     chrome_driver_path='/usr/bin/chromedriver'
