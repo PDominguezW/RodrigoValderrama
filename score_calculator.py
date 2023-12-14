@@ -67,7 +67,7 @@ def calculate_score(rut, data):
         sheet['B17'] = valores_sii[17].value
         sheet['B18'] = sheet[f'J{tamano_codigo + 6}'].value
     else:
-        print(f"No encontrado")
+        print(f"Score Calculator: Rut no encontrado")
 
     # INGRESAMOS DATA EXPERIAN
     sheet['B21'] = data["experian"]["resumen_avaluo_bienes_raices"]["total_protestos_y_documentos"]

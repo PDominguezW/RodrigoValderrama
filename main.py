@@ -1,5 +1,6 @@
 import os
 from flask import Flask, send_file
+from flask_cors import CORS
 from waitress import serve
 from score_calculator import calculate_score
 from utils import fill_and_clean_data, create_data_and_clean, validar_rut
@@ -7,6 +8,7 @@ from scrappers import run_scrappers
 
 # Create the Flask app
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/", methods=['GET'])
 def welcome():

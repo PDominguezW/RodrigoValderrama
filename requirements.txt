@@ -11,3 +11,4 @@ waitress
 openpyxl==3.1.0
 formulas
 xlwings
+flask-cors
