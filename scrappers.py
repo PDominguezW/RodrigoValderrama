@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 import os
 from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import load_dotenv
 
 # Equifax is not working because it requires a captcha
 # from equifaxScrapper import getData as getDataEquifax
@@ -20,17 +21,21 @@ def run_scrappers(rut):
     chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('prefs', prefs)
 
-    # Chromdriver path in server
-    chrome_driver_path='/usr/bin/chromedriver'
+    load_dotenv()
 
-    # Create a ChromeDriver service object
-    # To run on server:
+    if os.getenv('DEVELOPMENT') == "True":
+        # Chromdriver path in local
+        chrome_driver_path=ChromeDriverManager().install()
+    else:
+        # Chromdriver path in server
+        chrome_driver_path='/usr/bin/chromedriver'
+
     service = Service(chrome_driver_path)
-
-    # To run locally:
-    # service = Service(ChromeDriverManager().install())
-
     driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    # Maximize and zoom out the window
+    driver.maximize_window()
+    driver.execute_script("document.body.style.zoom='80%'")
 
     # Get the data for the rut
     rut_socio = getDataExperian(driver, rut)

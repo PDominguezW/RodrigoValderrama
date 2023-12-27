@@ -5,6 +5,7 @@ from waitress import serve
 from score_calculator import calculate_score
 from utils import fill_and_clean_data, create_data_and_clean, validar_rut
 from scrappers import run_scrappers
+import zipfile
 
 # Create the Flask app
 app = Flask(__name__)
@@ -39,7 +40,21 @@ def root(rut):
     # Calculate the score
     file_name = calculate_score(rut, data)
 
-    return send_file(file_name, as_attachment=True, download_name=file_name)
+    # Create a zip with the file of filename, and all the pfds in the pdf directory
+    with zipfile.ZipFile('contents.zip', 'w') as zipObj:
+        # Add file to zip
+        zipObj.write(file_name)
+
+        # Add files inside pdf directory to zip
+        for folderName, subfolders, filenames in os.walk('pdfs'):
+            for filename in filenames:
+                filePath = os.path.join(folderName, filename)
+                zipObj.write(filePath)
+
+    print("Process finished")
+
+    # Send the zip file
+    return send_file('contents.zip', as_attachment=True)
 
 if __name__ == "__main__":
     # Run Flask app

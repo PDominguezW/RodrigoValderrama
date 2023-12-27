@@ -5,10 +5,33 @@ import time
 from webdriver_manager.chrome import ChromeDriverManager
 import json
 import traceback
-from dotenv import load_dotenv
 import os
+import img2pdf
+from parameters import EXPERIAN_USER, EXPERIAN_PASSWORD, EXPERIAN_RESPUESTA_PREGUNTAS
 
-def extractDataFromTable(driver, rut):
+def take_full_screenshot(driver, file_name):
+    # Get the total height of the page
+    total_height = driver.execute_script("return document.body.scrollHeight")
+
+    images = []
+
+    for i in range(0, total_height, driver.execute_script("return window.innerHeight")):
+        # Scroll to next viewport height
+        driver.execute_script(f"window.scrollTo(0, {i});")
+        # Take screenshot and append to images list
+        images.append(driver.get_screenshot_as_png())
+
+    # Scroll back to top of the page
+    driver.execute_script("window.scrollTo(0, 0);")
+
+    # Convert the images into a single pdf file, with name file_name
+    # and save it in the pdfs folder
+    with open(os.path.join("pdfs", file_name), "wb") as f:
+        f.write(img2pdf.convert(images))
+        
+    return 0
+
+def extractDataFromTable(driver, rut, business):
 
     # Search items in the frame of name 'main'
     time.sleep(5)
@@ -51,6 +74,11 @@ def extractDataFromTable(driver, rut):
     # -----------------------------------------------
     # Here we start collecting the data
     # -----------------------------------------------
+
+    if business:
+        take_full_screenshot(driver, "experian_business.pdf")
+    else:
+        take_full_screenshot(driver, "experian_socio.pdf")
 
     print("Experian: Extracting data")
 
@@ -149,20 +177,17 @@ def extractDataFromTable(driver, rut):
 
     return data
 
-def getData(driver, rut):
+def getData(driver, rut, recursion_depth=0):
     print("Experian: Getting data from experian.cl")
-
-    # Load .env file
-    load_dotenv()
     
     try:
 
         driver.get("https://transacs.experian.cl/transacs/experian/login.asp")
         time.sleep(5)
 
-        usuario=os.getenv("EXPERIAN_USER")
-        password=os.getenv("EXPERIAN_PASSWORD")
-        respuesta=os.getenv("EXPERIAN_RESPUESTA_PREGUNTAS")
+        usuario = EXPERIAN_USER
+        password = EXPERIAN_PASSWORD
+        respuesta = EXPERIAN_RESPUESTA_PREGUNTAS
 
         # Input id user
         element = driver.find_element(By.XPATH, "//input[@id='user']")
@@ -199,7 +224,7 @@ def getData(driver, rut):
 
         print("Experian: Logged in")
 
-        data = extractDataFromTable(driver, rut)
+        data = extractDataFromTable(driver, rut, business=True)
 
         # Si hay socio
         if data['resumen_socios_sociedades']['rut_socio'] != None and data['resumen_socios_sociedades']['rut_socio'] != "":
@@ -213,7 +238,7 @@ def getData(driver, rut):
 
             time.sleep(5)
 
-            data['resumen_socios_sociedades']['data'] = extractDataFromTable(driver, rut_socio)
+            data['resumen_socios_sociedades']['data'] = extractDataFromTable(driver, rut_socio, business=False)
 
         # Write the data in a json file
         with open('experian.json', 'w') as outfile:
@@ -229,8 +254,13 @@ def getData(driver, rut):
         # Print traceback
         traceback.print_exc()
 
-        # Try again
-        getData(driver, rut)
+        # If recursion depth is 0, try again
+        if recursion_depth == 0:
+            getData(driver, rut, recursion_depth+1)
+        else:
+            print("Experian: Error in experianScrapper.py")
+            print("Experian: experian.cl finished")
+            return None
 
 if __name__ == "__main__":
 

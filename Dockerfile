@@ -1,7 +1,13 @@
 # Get chrome image
 FROM selenium/standalone-chrome:119.0
 
-COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py .env scrappers.py ./
+# Set environment variables
+ENV DEVELOPMENT=False
+
+COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py scrappers.py parameters.py ./
+
+# Create folder pdfs
+RUN mkdir pdfs
 
 # Give root permissions
 USER root

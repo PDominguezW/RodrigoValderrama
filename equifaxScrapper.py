@@ -1,25 +1,21 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
-import os
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium_recaptcha_solver import RecaptchaSolver
-from dotenv import load_dotenv
 import json
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 import traceback
+from parameters import EQUIFAX_USER, EQUIFAX_PASSWORD
 
 def getData(driver, rut):
     print("Starting equifaxScrapper.py")
 
-    # Load environment variables
-    load_dotenv()
-
     try:
 
-        usuario = os.getenv("EQUIFAX_USER")
-        password = os.getenv("EQUIFAX_PASSWORD")
+        usuario =  EQUIFAX_USER
+        password = EQUIFAX_PASSWORD
 
         while True:
             try:
