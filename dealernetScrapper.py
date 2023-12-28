@@ -10,7 +10,7 @@ import glob
 import traceback
 from parameters import DEALERNET_USER, DEALERNET_PASSWORD
 
-def getDataForRut(driver, rut):
+def getDataForRut(driver, rut, socio):
 
     # Reload page
     driver.refresh()
@@ -110,8 +110,12 @@ def getDataForRut(driver, rut):
     with open('dealernet.json', 'w') as outfile:
         json.dump(result_dict, outfile)
 
-    # Delete the file at 'pdf_file'
-    os.remove(pdf_file_name)
+    if not socio:
+        # Move the pdf file to the respaldo folder
+        os.rename(pdf_file_name, "respaldo/dealernet_business.pdf")
+    else:
+        # Move the pdf file to the respaldo folder
+        os.rename(pdf_file_name, "respaldo/dealernet_socio.pdf")
 
     return result_dict
 
@@ -144,7 +148,7 @@ def getData(driver, rut_businness, rut_socio):
 
     try:
         # Get the data for the rut
-        result_bussiness = getDataForRut(driver, rut_businness)
+        result_bussiness = getDataForRut(driver, rut_businness, socio=False)
 
         print("Dealernet: result_bussiness date extracted")
 
@@ -152,7 +156,7 @@ def getData(driver, rut_businness, rut_socio):
             print("Dealernet: rut_socio exists")
 
             # Restart the driver
-            result_socio = getDataForRut(driver, rut_socio)
+            result_socio = getDataForRut(driver, rut_socio, socio=True)
         else:
             result_socio = None
 
