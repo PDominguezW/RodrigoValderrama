@@ -46,7 +46,7 @@ def root(rut):
         zipObj.write(file_name)
 
         # Add files inside pdf directory to zip
-        for folderName, subfolders, filenames in os.walk('pdfs'):
+        for folderName, subfolders, filenames in os.walk('respaldo'):
             for filename in filenames:
                 filePath = os.path.join(folderName, filename)
                 zipObj.write(filePath)

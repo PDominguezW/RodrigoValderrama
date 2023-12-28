@@ -25,8 +25,8 @@ def take_full_screenshot(driver, file_name):
     driver.execute_script("window.scrollTo(0, 0);")
 
     # Convert the images into a single pdf file, with name file_name
-    # and save it in the pdfs folder
-    with open(os.path.join("pdfs", file_name), "wb") as f:
+    # and save it in the respaldo folder
+    with open(os.path.join("respaldo", file_name), "wb") as f:
         f.write(img2pdf.convert(images))
         
     return 0

@@ -6,11 +6,11 @@ ENV DEVELOPMENT=False
 
 COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py scrappers.py parameters.py ./
 
-# Create folder pdfs
-RUN mkdir pdfs
-
 # Give root permissions
 USER root
+
+# Create folder respaldo
+RUN mkdir respaldo
 
 RUN apt-get update
 
