@@ -3,8 +3,9 @@ FROM selenium/standalone-chrome:119.0
 
 # Set environment variables
 ENV DEVELOPMENT=False
+ENV MONGODB_URL=mongodb+srv://telefactor2:telefactor2@telefactor.cdmw70f.mongodb.net/
 
-COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py equifaxScrapper.py experianScrapper.py requirements.txt main.py scrappers.py parameters.py ./
+COPY modelo_evaluacion.xlsx Tabla_SII.xlsx score_calculator.py utils.py empty_data.json dealernetScrapper.py experianScrapper.py requirements.txt main.py scrappers.py parameters.py ./
 
 # Give root permissions
 USER root

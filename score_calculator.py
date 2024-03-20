@@ -17,6 +17,8 @@ def calculate_score(rut, data):
     # Read data from 'Tabla_SII.xlsx'
     sheet_sii = openpyxl.load_workbook('Tabla_SII.xlsx', read_only=True)['Tabla_SII']
 
+    print("Score Calculator: Buscando rut en Tabla_SII.xlsx")
+
     # Search for the B row that contains rut_sin_verificador
     encontrado = False
     for row in sheet_sii.iter_rows(min_row=2, max_col=23):

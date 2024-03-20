@@ -13,3 +13,5 @@ formulas
 xlwings
 flask-cors
 img2pdf
+pymongo
+python-dotenv
